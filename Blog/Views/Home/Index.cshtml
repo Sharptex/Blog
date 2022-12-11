@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using Blog_DAL.Models;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager;
+
+@model Blog.ViewModels.Account.MainViewModel;
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (SignInManager.IsSignedIn(User))
+{
+    <div>Hello @User.Identity.Name!</div>
+}
+else
+{
+    <div class="row">
+        <div class="side">
+        </div>
+
+        <div class="main">
+            <partial name="Login" model="Model.LoginView" />
+            <partial name="Register" model="Model.RegisterView" />
+        </div>
+    </div>
+}
