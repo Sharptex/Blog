@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Blog.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,12 +8,12 @@ using System.Threading.Tasks;
 using Blog_DAL.Models;
 using Blog.DTO;
 using Blog_BLL.Contracts;
-using Blog.DTO.Request;
+using Blog.ViewModels;
 
 namespace Blog.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    //[Route("api/[controller]")]
+    //[ApiController]
     public class AccountController : Controller
     {
         private IMapper _mapper;
@@ -26,9 +25,18 @@ namespace Blog.Controllers
             _mapper = mapper;
         }
 
+
+        [Route("RegisterGet")]
+        [HttpGet]
+        public IActionResult RegisterGet()
+        {
+            var response = new RegisterViewModel();
+            return View("Register", response);
+        }
+
         [Route("Register")]
         [HttpPost]
-        public async Task<IActionResult> Register(UserProfileDTO dto)
+        public async Task<IActionResult> Register(RegisterViewModel dto)
         {
             if (dto == null)
             {
@@ -41,23 +49,34 @@ namespace Blog.Controllers
 
             User user = _mapper.Map<User>(dto);
 
-            var data = await _accountService.Create(user, dto.Password, dto.Roles);
+            var data = await _accountService.Create(user, dto.PasswordReg, dto.Roles);
             //await _accountService.SignInAsync(user, true);
 
             if (!data)
             {
-                ModelState.AddModelError(string.Empty, "Bad reg");
+                ModelState.AddModelError(string.Empty, "Bad registration");
             }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok();
+            //return Ok();
+            return RedirectToAction("LoginGet");
+        }
+
+        [Route("")]
+        [Route("LoginGet")]
+        //[Route("[controller]/[action]")]
+        [HttpGet]
+        public IActionResult LoginGet()
+        {
+            var response = new LoginViewModel();
+            return View("Login", response);
         }
 
         [Route("Login")]
         [HttpPost]
-        public async Task<IActionResult> Login(LoginDTO dto)
+        public async Task<IActionResult> Login(LoginViewModel dto)
         {
             if (dto == null)
             {
@@ -76,8 +95,11 @@ namespace Blog.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok();
+            //return Ok();
+            return RedirectToAction("LoginGet");
         }
+
+
 
         [Route("Logout")]
         [HttpPost]
@@ -85,7 +107,8 @@ namespace Blog.Controllers
         {
             await _accountService.SignOutAsync();
 
-            return Ok();
+            //return Ok();
+            return RedirectToAction("LoginGet");
         }
 
         [Route("GetAll")]

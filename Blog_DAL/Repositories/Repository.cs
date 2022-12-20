@@ -64,6 +64,10 @@ namespace Blog_DAL.Repositories
             {
                 return (await (_dbSet as DbSet<Post>).Include(p => p.Tags).ToListAsync()) as List<T>;
             }
+            if (typeof(T) == typeof(Role))
+            {
+                return (await (_dbSet as DbSet<Role>).Include(p => p.Users).ToListAsync()) as List<T>;
+            }
 
             return await _dbSet.ToListAsync();
         }

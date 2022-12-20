@@ -62,9 +62,9 @@ namespace Blog
                 opts.Password.RequireDigit = false;
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-            //services.AddControllersWithViews();
-            //services.AddRazorPages();
-            services.AddControllers();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+            //services.AddControllers();
 
             services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<TagDTOValidator>());
 
@@ -92,13 +92,13 @@ namespace Blog
                 });
             });
 
-            services.AddSwaggerGen();
+            //services.AddSwaggerGen();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API WSVAP (WebSmartView)", Version = "v1" });
-                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); //This line
-            });
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API WSVAP (WebSmartView)", Version = "v1" });
+            //    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); //This line
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -109,12 +109,12 @@ namespace Blog
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                    options.RoutePrefix = string.Empty;
-                });
+                //app.UseSwagger();
+                //app.UseSwaggerUI(options =>
+                //{
+                //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                //    options.RoutePrefix = string.Empty;
+                //});
             }
             else
             {
@@ -124,7 +124,7 @@ namespace Blog
             }
 
             app.UseHttpsRedirection();
-            //app.UseStaticFiles();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -132,7 +132,15 @@ namespace Blog
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            //app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            //app.UseEndpoints(endpoints => { endpoints.MapRazorPages(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                            name: "default",
+                            pattern: "{controller=Home}/{action=Index}/{id?}");
+                //endpoints.MapRazorPages();
+            });
 
             //app.("/login", async (HttpContext context) =>
             //{

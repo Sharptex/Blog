@@ -1,4 +1,4 @@
-﻿@model Blog.ViewModels.Account.RegisterViewModel
+﻿@model Blog.ViewModels.RegisterViewModel
 
 @{
     ViewData["Title"] = "Register";
@@ -6,8 +6,7 @@
 
 <h2>Регистрация нового пользователя</h2>
 
-<form method="post" asp-controller="Register" asp-action="Register">
-    <div asp-validation-summary="ModelOnly"></div>
+<form method="post" asp-controller="Account" asp-action="Register">
     <div>
         <label asp-for="FirstName"></label><br />
         <input asp-for="FirstName" />
@@ -34,6 +33,11 @@
         <span asp-validation-for="PasswordConfirm"></span>
     </div>
     <div>
-        <input type="submit" value="Регистрация" />
+        <input class="enter_submit" type="submit" value="Регистрация" />
     </div>
 </form>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

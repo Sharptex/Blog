@@ -45,7 +45,8 @@ namespace Blog_BLL.Services
             user.Roles.Clear();
             await _userManager.UpdateAsync(user);
             var defaultUserRole = _roles.GetAllAsync().Result.FirstOrDefault(x =>x.Name == "DefaultUser");
-            if (defaultUserRole!=null && await AddRoleAndClaimAsync(user, defaultUserRole)) { return false; }
+            if (defaultUserRole == null || !await AddRoleAndClaimAsync(user, defaultUserRole)) { return false; }
+            if (roleIds == null) { return true; }
 
             foreach (var id in roleIds)
             {
