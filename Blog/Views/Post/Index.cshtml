@@ -1,0 +1,80 @@
+﻿@model Blog.ViewModels.PostAndCommentsViewModel
+
+@{
+    ViewData["Title"] = "Post Home";
+}
+
+<h2>@Model.Title</h2>
+
+<div>
+    @if (@Model.Tags.Count() != 0)
+    {
+        @for (var i = 0; i < Model.Tags.Count(); i++)
+        {
+            <label asp-for="@Model.Tags[i].Name">@Model.Tags[i].Name</label>
+        }
+    }
+    else
+    {
+        <div>
+            <label> Тэгов пока нет.</label>
+        </div>
+    }
+</div>
+
+<hr />
+<p>@Model.Content</p>
+<hr />
+
+<p class="rig">@Model.Author.Login</p>
+
+
+<div>
+    <label> Комментарии к статье</label>
+</div>
+
+
+<div class="block-reg background-white">
+
+    @if (@Model.Comments.Count() != 0)
+    {
+
+        @foreach (var comm in @Model.Comments)
+        {
+            <div class="list-block">
+                <div class="center-block">
+                    @comm.Content
+                </div>
+                <div class="rig">@comm.Author.Login </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div>
+            <label> Комментариев пока нет.</label>
+        </div>
+    }
+
+</div>
+
+<form method="post" asp-controller="Comment" asp-action="Add">
+    <input type="hidden" asp-for="@Model.Id" />
+    <div>
+        <label asp-for="Comment"></label><br />
+        <textarea asp-for="Comment.Content"></textarea>
+        <span asp-validation-for="Comment"></span>
+    </div>
+    <div>
+        <input class="enter_submit" type="submit" value="Оставить комментарий" />
+    </div>
+</form>
+
+<div>
+    <a asp-area="" asp-controller="Post" asp-action="GetAll">Перейти к списку всех статей</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

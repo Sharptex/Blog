@@ -1,0 +1,38 @@
+﻿@model Blog.ViewModels.CommentViewModel
+
+@{
+    ViewData["Title"] = "Comment View";
+}
+
+<h2>Просмотр комментария</h2>
+
+<div class="block-reg background-white">
+    <div class="center-block">
+        @Model.Content
+    </div>
+    <a asp-area="" asp-controller="Comment" asp-action="Index" asp-route-id="@Model.Id">@Model.Post.Title</a>
+    <div class="rig">@Model.Author.Login </div>
+</div>
+
+<div>
+    <form method="get" asp-controller="Comment" asp-action="Get" asp-route-id="@Model.Id">
+        <div>
+            <input class="enter_submit" type="submit" value="Редактировать" />
+        </div>
+    </form>
+
+    <form method="post" asp-controller="Comment" asp-action="Delete" asp-route-id="@Model.Id">
+        <div>
+            <input class="enter_submit" type="submit" value="Удалить" />
+        </div>
+    </form>
+</div>
+
+<div>
+    <a asp-area="" asp-controller="Comment" asp-action="GetAll">Перейти к списку</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

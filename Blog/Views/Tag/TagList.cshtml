@@ -1,0 +1,51 @@
+﻿@model List<Blog.ViewModels.TagViewModel>
+
+@{
+    ViewData["Title"] = "Tag List";
+}
+
+<h2>Все теги</h2>
+<div>
+    <a asp-area="" asp-controller="Tag" asp-action="Index">Добавить тэг</a>
+</div>
+
+<div class="block-reg background-white">
+
+    @if (@Model.Count() != 0)
+    {
+
+        @foreach (var tag in @Model)
+        {
+            <div class="list-block">
+                <div class="center-block">
+                    <a asp-area="" asp-controller="Tag" asp-action="Index" asp-route-id="@tag.Id">@tag.Name</a>
+                </div>
+                <div class="rig">Статей по тегу: @tag.Posts.Count() </div>
+
+
+                <div>
+                    <form method="get" asp-controller="Tag" asp-action="Get" asp-route-id="@tag.Id">
+                        <div>
+                            <input class="enter_submit" type="submit" value="Редактировать" />
+                        </div>
+                    </form>
+
+                    <form method="post" asp-controller="Tag" asp-action="Delete" asp-route-id="@tag.Id">
+                        <div>
+                            <input class="enter_submit" type="submit" value="Удалить" />
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <div>
+            <label> Тегов пока нет.</label>
+        </div>
+    }
+
+
+</div>

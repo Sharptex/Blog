@@ -42,7 +42,7 @@ namespace Blog_DAL.Repositories
         {
             if (typeof(T) == typeof(Post)) 
             {
-                return (await (_dbSet as DbSet<Post>).Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id)) as T;
+                return (await (_dbSet as DbSet<Post>).Include(p => p.Tags).Include(p => p.Comments).ThenInclude(comm => comm.Author).Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == id)) as T;
             }
 
             if (typeof(T) == typeof(Tag))
@@ -53,6 +53,11 @@ namespace Blog_DAL.Repositories
             if (typeof(T) == typeof(Role))
             {
                 return (await (_dbSet as DbSet<Role>).Include(p => p.Users).FirstOrDefaultAsync(p => p.Id == id)) as T;
+            }
+
+            if (typeof(T) == typeof(Comment))
+            {
+                return (await (_dbSet as DbSet<Comment>).Include(p => p.Author).Include(p => p.Post).FirstOrDefaultAsync(p => p.Id == id)) as T;
             }
 
             return await _dbSet.FindAsync(id);
@@ -68,13 +73,34 @@ namespace Blog_DAL.Repositories
             {
                 return (await (_dbSet as DbSet<Role>).Include(p => p.Users).ToListAsync()) as List<T>;
             }
+            if (typeof(T) == typeof(Tag))
+            {
+                return (await (_dbSet as DbSet<Tag>).Include(p => p.Posts).ToListAsync()) as List<T>; 
+            }
+            if (typeof(T) == typeof(Comment))
+            {
+                return (await (_dbSet as DbSet<Comment>).Include(p => p.Author).Include(p=>p.Post).ToListAsync()) as List<T>;
+            }
 
             return await _dbSet.ToListAsync();
         }
 
         public async Task<int> UpdateAsync(T item)
         {
+            Console.WriteLine("___________________________________");
+            Console.WriteLine(_db.ChangeTracker.DebugView.LongView);
+
+            //var xxx = _db.Set<T>().Local.Contains(item);
+
             _db.Update(item);
+            Console.WriteLine("___________________________________");
+            Console.WriteLine(_db.ChangeTracker.DebugView.LongView);
+
+            //foreach (var tag in (item as Post).Tags)
+            //{
+            //    var xxx2 = _db.Set<Tag>().Local.Contains(tag);
+            //}
+
             return await _db.SaveChangesAsync();
         }
     }

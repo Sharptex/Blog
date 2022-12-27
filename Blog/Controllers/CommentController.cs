@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using Blog.DTO;
+using Blog.ViewModels;
 using Blog_BLL.Contracts;
 using Blog_DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CommentController : ControllerBase
+    //[Route("api/[controller]")]
+    //[ApiController]
+    public class CommentController : Controller
     {
         private readonly ICommentService _commentService;
         private readonly IPostService _postService;
@@ -26,8 +28,18 @@ namespace Blog.Controllers
             _mapper = mapper;
         }
 
+        [Route("CommentCreate")]
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var data = await _postService.GetAllAsync();
+            var result = _mapper.Map<IEnumerable<PostViewModel>>(data);
+
+            return View("CommentCreate", result);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Add(CommentDTO dto)
+        public async Task<IActionResult> Add(PostAndCommentsViewModel dto)
         {
             if (dto == null)
             {
@@ -37,58 +49,73 @@ namespace Blog.Controllers
             {
                 return BadRequest("Invalid model object");
             }
-            if (_accountService.GetAsync(dto.Author_id).Result == null || _postService.GetAsync(dto.Post_id).Result == null)
-            {
-                return BadRequest("Invalid id for post or author entity");
-            }
 
-
-            Comment comment = _mapper.Map<Comment>(dto);
+            Comment comment = _mapper.Map<Comment>(dto.Comment);
             comment.Created_at = DateTimeOffset.Now;
             comment.Updated_at = DateTimeOffset.Now;
+            comment.Post_id = dto.Id;
 
-            var data = await _commentService.CreateAsync(comment);
-            var result = _mapper.Map<CommentDTO>(data);
-            return Ok(result);
+            var data = await _commentService.CreateAsync(User, comment);
+
+            return RedirectToAction("Index", "Post", new { id = dto.Id });
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAll()
         {
             var data = await _commentService.GetAllAsync();
-            var result = _mapper.Map<IEnumerable<CommentDTO>>(data);
-            return Ok(result);
+            var result = _mapper.Map<IEnumerable<CommentViewModel>>(data);
+            //return Ok(result);
+            return View("CommentList", result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> Get(Guid id)
         {
             var data = await _commentService.GetAsync(id);
             if (data == null) return NotFound();
 
-            var result = _mapper.Map<CommentDTO>(data);
-            return Ok(result);
+            var result = _mapper.Map<CommentViewModel>(data);
+            //return Ok(result);
+            return View("CommentEditor", result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(Guid id, CommentDTO dto)
+        [Route("Comment/Index")]
+        [HttpGet]
+        public async Task<IActionResult> Index(Guid id)
+        {
+            var data = await _commentService.GetAsync(id);
+            if (data == null) return NotFound();
+
+            var result = _mapper.Map<CommentViewModel>(data);
+            //return Ok(result);
+            return View("Index", result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(CommentViewModel dto, Guid postId, string authorId)
         {
             Comment comment = _mapper.Map<Comment>(dto);
-            comment.Id = id;
             comment.Updated_at = DateTimeOffset.Now;
+            //var user = await _accountService.GetAsync(authorId);
+            //var post = await _postService.GetAsync(postId);
+            comment.Author_id = authorId;
+            comment.Post_id = postId;
 
             var result = await _commentService.UpdateAsync(comment);
-            return Ok(result);
+            //return Ok(data);
+            return RedirectToAction("GetAll");
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
             var data = await _commentService.GetAsync(id);
             if (data == null) return NotFound();
 
             var result = await _commentService.DeleteAsync(id);
-            return Ok(result);
+            //return Ok(data);
+            return RedirectToAction("GetAll");
         }
     }
 }

@@ -1,0 +1,67 @@
+﻿@model Blog.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = "User Editor";
+}
+
+<h2>Редактирование пользователя</h2>
+
+<form method="post" asp-controller="Account" asp-action="Update">
+    <input type="hidden" class="form-control" asp-for="Id" />
+    <div>
+        @if (@Model.Roles.Count() != 0)
+        {
+            @for (var i = 0; i < Model.Roles.Count(); i++)
+            {
+                <input type="checkbox" asp-for="@Model.Roles[i].Selected" />
+                <label asp-for="@Model.Roles[i].Name">@Model.Roles[i].Name</label>
+                <input type="hidden" asp-for="@Model.Roles[i].Id" />
+                <input type="hidden" asp-for="@Model.Roles[i].Name" />
+            }
+        }
+        else
+        {
+            <div>
+                <label> Ролей пока нет.</label>
+            </div>
+        }
+    </div>
+
+    <div>
+        <label asp-for="FirstName"></label><br />
+        <input asp-for="FirstName" />
+        <span asp-validation-for="FirstName"></span>
+    </div>
+    <div>
+        <label asp-for="LastName"></label><br />
+        <input asp-for="LastName"></input>
+        <span asp-validation-for="LastName"></span>
+    </div>
+    <div>
+        <label asp-for="Login"></label><br />
+        <input asp-for="Login"></input>
+        <span asp-validation-for="Login"></span>
+    </div>
+    <div>
+        <label asp-for="CurrentPassword"></label><br />
+        <input asp-for="CurrentPassword"></input>
+        <span asp-validation-for="CurrentPassword"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label><br />
+        <input asp-for="Password"></input>
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div>
+        <input class="enter_submit" type="submit" value="Сохранить" />
+    </div>
+</form>
+
+<div>
+    <a asp-area="" asp-controller="Account" asp-action="GetAll">Выйти без сохранения</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

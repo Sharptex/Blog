@@ -21,16 +21,19 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Комментарии</a>
+                            <a class="nav-link text-dark" asp-controller="Comment" asp-action="GetAll">Комментарии</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Register">Тэги</a>
+                            <a class="nav-link text-dark" asp-controller="Tag" asp-action="GetAll">Тэги</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Register">Пользователи</a>
+                            <a class="nav-link text-dark" asp-controller="Post" asp-action="GetAll">Статьи</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Register">Роли</a>
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="GetAll">Пользователи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Role" asp-action="GetAll">Роли</a>
                         </li>
                         <li class="nav-item">
                             <partial class="nav-link text-dark" name="_Logout" />

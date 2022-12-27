@@ -1,0 +1,27 @@
+﻿@model Blog.ViewModels.TagViewModel
+
+@{
+    ViewData["Title"] = "Tag Home";
+}
+
+<h2>Добавление тега</h2>
+
+<form method="post" asp-controller="Tag" asp-action="Add">
+    <div>
+        <label asp-for="Name"></label><br />
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <div>
+        <input class="enter_submit" type="submit" value="Добавить" />
+    </div>
+</form>
+
+<div>
+    <a asp-area="" asp-controller="Tag" asp-action="GetAll">Перейти к списку всех тэгов</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

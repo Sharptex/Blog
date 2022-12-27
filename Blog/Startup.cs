@@ -62,18 +62,18 @@ namespace Blog
                 opts.Password.RequireDigit = false;
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //.AddCookie(options =>
+            //{
+            //    options.LoginPath = "/LoginGet";
+            //    options.AccessDeniedPath = "/Home/AccessDenied";
+            //});
+
             services.AddControllersWithViews();
             services.AddRazorPages();
             //services.AddControllers();
 
             services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<TagDTOValidator>());
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(options =>
-                    {
-                        options.LoginPath = "/api/login";
-                        options.AccessDeniedPath = "/api/accessdenied";
-                    });
 
             services.AddAuthorization(opts => {
 
@@ -92,6 +92,13 @@ namespace Blog
                 });
             });
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Home/Unauthorized";
+                options.AccessDeniedPath = "/Home/AccessDenied";
+
+            });
+
             //services.AddSwaggerGen();
 
             //services.AddSwaggerGen(c =>
@@ -108,7 +115,8 @@ namespace Blog
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                
                 //app.UseSwagger();
                 //app.UseSwaggerUI(options =>
                 //{
@@ -123,7 +131,13 @@ namespace Blog
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseExceptionHandler("/home/error/{0}");
+
+            //app.UseHttpsRedirection();
+            app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
+
+            //app.UseStatusCodePages();
+
             app.UseStaticFiles();
 
             app.UseRouting();

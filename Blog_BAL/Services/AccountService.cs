@@ -40,15 +40,16 @@ namespace Blog_BLL.Services
             }
         }
 
-        public async Task<bool> AddRolesAndClaimsAsync(User user, ICollection<Guid> roleIds)
+        public async Task<bool> AddRolesAndClaimsAsync(User user, ICollection<Guid> newRoles)
         {
             user.Roles.Clear();
+            await _userManager.RemoveClaimsAsync(user, await _userManager.GetClaimsAsync(user));
             await _userManager.UpdateAsync(user);
             var defaultUserRole = _roles.GetAllAsync().Result.FirstOrDefault(x =>x.Name == "DefaultUser");
             if (defaultUserRole == null || !await AddRoleAndClaimAsync(user, defaultUserRole)) { return false; }
-            if (roleIds == null) { return true; }
+            if (newRoles == null) { return true; }
 
-            foreach (var id in roleIds)
+            foreach (var id in newRoles)
             {
                 var role = await _roles.GetAsync(id);
                 if (role != null && id != defaultUserRole.Id)
@@ -109,6 +110,8 @@ namespace Blog_BLL.Services
         public async Task<User> GetAsync(string id)
         {
             var data = await _userManager.Users.Include(p => p.Roles).Include(n=>n.Posts).FirstOrDefaultAsync(x=>x.Id==id);
+
+            var claims = await _userManager.GetClaimsAsync(data);
             return data;
         }
 

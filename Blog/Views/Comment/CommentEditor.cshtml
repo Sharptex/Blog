@@ -1,0 +1,28 @@
+﻿@model Blog.ViewModels.CommentViewModel
+
+@{
+    ViewData["Title"] = "Comment Editor";
+}
+
+<h2>Редактирование комментария</h2>
+
+<form method="post" asp-controller="Comment" asp-action="Update" asp-route-postId="@Model.Post.Id" asp-route-authorId="@Model.Author.Id">
+    <input type="hidden" asp-for="@Model.Id" />
+    <div>
+        <label asp-for="Content"></label><br />
+        <textarea asp-for="Content"></textarea>
+        <span asp-validation-for="Content"></span>
+    </div>
+    <div>
+        <input class="enter_submit" type="submit" value="Сохранить изменения" />
+    </div>
+</form>
+
+<div>
+    <a asp-area="" asp-controller="Comment" asp-action="GetAll">Выйти без сохранения</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

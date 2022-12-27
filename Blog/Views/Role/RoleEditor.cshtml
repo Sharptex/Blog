@@ -1,0 +1,33 @@
+﻿@model Blog.ViewModels.RoleViewModel
+
+@{
+    ViewData["Title"] = "Role Editor";
+}
+
+<h2>Редактирование роли</h2>
+
+<form method="post" asp-controller="Role" asp-action="Update">
+    <input type="hidden" class="form-control" asp-for="Id" />
+    <div>
+        <label asp-for="Name"></label><br />
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <div>
+        <label asp-for="Description"></label><br />
+        <textarea asp-for="Description"></textarea>
+        <span asp-validation-for="Description"></span>
+    </div>
+    <div>
+        <input class="enter_submit" type="submit" value="Сохранить" />
+    </div>
+</form>
+
+<div>
+    <a asp-area="" asp-controller="Role" asp-action="GetAll">Перейти к списку всех ролей</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

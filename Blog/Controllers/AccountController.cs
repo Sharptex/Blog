@@ -9,6 +9,7 @@ using Blog_DAL.Models;
 using Blog.DTO;
 using Blog_BLL.Contracts;
 using Blog.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
@@ -18,13 +19,26 @@ namespace Blog.Controllers
     {
         private IMapper _mapper;
         private readonly IAccountService _accountService;
+        private readonly IRoleService _roleService;
 
-        public AccountController(IAccountService accountService, IMapper mapper)
+        public AccountController(IAccountService accountService, IRoleService roleService, IMapper mapper)
         {
             _accountService = accountService;
+            _roleService = roleService;
             _mapper = mapper;
         }
 
+
+        [Route("UserGet")]
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var response = new UserViewModel();
+            var allRoles = await _roleService.GetAllAsync();
+            var allRolesVM = _mapper.Map<IEnumerable<RoleViewModel>>(allRoles);
+            response.Roles = allRolesVM.ToList();
+            return View("Index", response);
+        }
 
         [Route("RegisterGet")]
         [HttpGet]
@@ -99,8 +113,6 @@ namespace Blog.Controllers
             return RedirectToAction("LoginGet");
         }
 
-
-
         [Route("Logout")]
         [HttpPost]
         public async Task<IActionResult> Logout()
@@ -111,50 +123,58 @@ namespace Blog.Controllers
             return RedirectToAction("LoginGet");
         }
 
-        [Route("GetAll")]
+        //[Authorize(Policy = "AdminPolicy")]
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAll()
         {
             var data = await _accountService.GetAllAsync();
-            var result = _mapper.Map<IEnumerable<UserDTO>>(data);
-            return Ok(result);
+            var result = _mapper.Map<IEnumerable<UserViewModel>>(data);
+            //return Ok(result);
+            return View("UserList", result);
         }
 
-        [Route("Get")]
         [HttpGet]
-        public async Task<IActionResult> GetAsync(string id)
+        public async Task<IActionResult> Get(string id)
         {
             var data = await _accountService.GetAsync(id);
             if (data == null) return NotFound();
+            var result = _mapper.Map<UserViewModel>(data);
 
-            var result = _mapper.Map<UserDTO>(data);
-            return Ok(result);
+            var allRoles = await _roleService.GetAllAsync();
+            var allRolesVM = _mapper.Map<IEnumerable<RoleViewModel>>(allRoles);
+            var vm = allRolesVM.Select(x => { if (result.Roles.Any(y => y.Id == x.Id)) { x.Selected = true; return x; } else { return x; } }).ToList();
+            result.Roles = vm;
+
+            //return Ok(result);
+            return View("UserEditor", result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(UserDTO dto, string currentPasword)
+        [HttpPost]
+        public async Task<IActionResult> Update(UserViewModel dto, string currentPasword)
         {
             var user = await _accountService.GetAsync(dto.Id.ToString());
             if (user == null) return NotFound();
 
-            await _accountService.UpdatePasswordAsync(user, currentPasword, dto.Password);
-            await _accountService.AddRolesAndClaimsAsync(user, dto.Roles);
+            await _accountService.UpdatePasswordAsync(user, dto.CurrentPassword, dto.Password);
+            await _accountService.AddRolesAndClaimsAsync(user, dto.Roles.Select(v => v.Id).ToList());
 
             user.FirstName = dto.FirstName;
             user.LastName = dto.LastName;
             user.UserName = dto.Login;
 
             var data = await _accountService.UpdateAsync(user);
-            return Ok(data);
+            //return Ok(data);
+            return RedirectToAction("GetAll");
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _accountService.GetAsync(id);
             if (user == null) return NotFound();
             var result = await _accountService.DeleteAsync(user);
-            return Ok(result);
+            //return Ok(result);
+            return RedirectToAction("GetAll");
         }
     }
 }

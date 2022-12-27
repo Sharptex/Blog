@@ -21,6 +21,7 @@ namespace Blog_BLL.Services
             _posts = posts;
             _tags = tags;
             _userManager = userManager;
+             
         }
 
         public async Task<Post> CreatePostWithTags(ClaimsPrincipal cp,  Post post)
@@ -28,29 +29,31 @@ namespace Blog_BLL.Services
             User user = await _userManager.GetUserAsync(cp);
             post.Author = user;
             post.Author_id = user.Id;
-            await CreateAndUpdateTags(post, post.Tags);
-            await _posts.CreateAsync(post);
-            return post;
+            var tags = await CreateTagList(post.Tags);
+            if (tags == null) { return null; }
+            post.Tags = tags;
+
+            var newPost = await _posts.CreateAsync(post);
+            return newPost;
         }
 
-        private async Task CreateAndUpdateTags(Post post, ICollection<Tag> tags)
+        private async Task<List<Tag>> CreateTagList(ICollection<Tag> tags)
         {
-            var tagList = await _tags.GetAllAsync();
             var newTagList = new List<Tag>();
 
-            foreach (var item in tags)
+            foreach (var tag in tags)
             {
-                var tagItem = tagList.FirstOrDefault(x => x.Name == item.Name);
+                var tagItem = await _tags.GetAsync(tag.Id);
 
                 if (tagItem == null)
                 {
-                    tagItem = await _tags.CreateAsync(item);
+                    return null;
                 }
 
                 newTagList.Add(tagItem);
             }
 
-            post.Tags = newTagList;
+            return newTagList;
         }
 
         public async Task<IEnumerable<Post>> GetAllAsync()
@@ -70,7 +73,7 @@ namespace Blog_BLL.Services
             User user = await _userManager.GetUserAsync(cp);
             post.Author = user;
             post.Author_id = user.Id;
-            await CreateAndUpdateTags(post, post.Tags);
+
             var data = await _posts.UpdateAsync(post);
             return data;
         }

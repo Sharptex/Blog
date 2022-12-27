@@ -1,0 +1,52 @@
+﻿@model Blog.ViewModels.PostViewModel
+
+@{
+    ViewData["Title"] = "Post Editor";
+}
+
+<h2>Редактирование статьи</h2>
+
+<form method="post" asp-controller="Post" asp-action="Update">
+    <input type="hidden" class="form-control" asp-for="Id" />
+    <div>
+        @if (@Model.Tags.Count() != 0)
+        {
+            @for (var i = 0; i < Model.Tags.Count(); i++)
+            {
+                <input type="checkbox" asp-for="@Model.Tags[i].Selected" />
+                <label asp-for="@Model.Tags[i].Name">@Model.Tags[i].Name</label>
+                <input type="hidden" asp-for="@Model.Tags[i].Id" />
+                <input type="hidden" asp-for="@Model.Tags[i].Name" />
+            }
+        }
+        else
+        {
+            <div>
+                <label> Тэгов пока нет.</label>
+            </div>
+        }
+    </div>
+
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div>
+        <label asp-for="Content"></label><br />
+        <textarea asp-for="Content"></textarea>
+        <span asp-validation-for="Content"></span>
+    </div>
+    <div>
+        <input class="enter_submit" type="submit" value="Сохранить изменения" />
+    </div>
+</form>
+
+<div>
+    <a asp-area="" asp-controller="Post" asp-action="GetAll">Выйти без сохранения</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

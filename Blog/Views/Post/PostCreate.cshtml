@@ -1,0 +1,52 @@
+﻿@model Blog.ViewModels.PostViewModel
+
+@{
+    ViewData["Title"] = "Post Home";
+}
+
+<h2>Добавление статьи</h2>
+
+<form method="post" asp-controller="Post" asp-action="Add">
+
+    <div>
+        @if (@Model.Tags.Count() != 0)
+        {
+                @for (var i = 0; i < Model.Tags.Count(); i++)
+                {
+                    <input type="checkbox" asp-for="@Model.Tags[i].Selected" />
+                    <label asp-for="@Model.Tags[i].Name">@Model.Tags[i].Name</label>
+                    <input type="hidden" asp-for="@Model.Tags[i].Id" />
+                    <input type="hidden" asp-for="@Model.Tags[i].Name" />
+                }
+        }
+        else
+        {
+        <div>
+            <label> Тэгов пока нет.</label>
+        </div>
+        }
+    </div>
+
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div>
+        <label asp-for="Content"></label><br />
+        <textarea asp-for="Content"></textarea>
+        <span asp-validation-for="Content"></span>
+    </div>
+    <div>
+        <input class="enter_submit" type="submit" value="Добавить" />
+    </div>
+</form>
+
+<div>
+    <a asp-area="" asp-controller="Post" asp-action="GetAll">Перейти к списку всех статей</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

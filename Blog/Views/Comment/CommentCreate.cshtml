@@ -1,0 +1,46 @@
+﻿@model List<Blog.ViewModels.PostViewModel>
+
+@{
+    ViewData["Title"] = "Post selection";
+}
+
+<h2>Выберите статью для добавления комментария</h2>
+
+<div class="block-reg background-white">
+
+    @if (@Model.Count() != 0)
+    {
+
+        @foreach (var post in @Model)
+        {
+            <div class="list-block">
+                <div class="center-block">
+                    <a asp-area="" asp-controller="Post" asp-action="Index" asp-route-id="@post.Id">@post.Title</a>
+                </div>
+
+                <div>
+                    @if (@post.Tags.Count() != 0)
+                    {
+                        @for (var i = 0; i < post.Tags.Count(); i++)
+                        {
+                            <label>@post.Tags[i].Name</label>
+                        }
+                    }
+                    else
+                    {
+                        <label> Тэгов пока нет.</label>
+                    }
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <div>
+            <label> Статей пока нет.</label>
+        </div>
+    }
+
+
+</div>

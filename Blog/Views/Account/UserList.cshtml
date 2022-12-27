@@ -1,0 +1,72 @@
+﻿@model List<Blog.ViewModels.UserViewModel>
+
+@{
+    ViewData["Title"] = "User List";
+}
+
+<h2>Все пользователи</h2>
+<div>
+    <a asp-area="" asp-controller="Account" asp-action="RegisterGet">Добавить пользователя</a>
+</div>
+
+<div class="block-reg background-white">
+
+    @if (@Model.Count() != 0)
+    {
+
+        @foreach (var user in @Model)
+        {
+    <div class="list-block">
+        <div class="center-block">
+            <a asp-area="" asp-controller="Account" asp-action="Get" asp-route-id="@user.Id">@user.FirstName @user.LastName</a>
+        </div>
+
+        <div>
+            @if (user.Roles.Count() != 0)
+            {
+                @for (var i = 0; i < user.Roles.Count(); i++)
+                {
+                    <label>@user.Roles[i].Name</label>
+                }
+            }
+            else
+            {
+                    <label> Ролей пока нет.</label>
+            }
+        </div>
+
+
+        <div>
+            <form method="get" asp-controller="Account" asp-action="Get" asp-route-id="@user.Id">
+                <div>
+                    <input class="enter_submit" type="submit" value="Редактировать" />
+                </div>
+            </form>
+
+            <form method="post" asp-controller="Account" asp-action="Delete" asp-route-id="@user.Id">
+                <div>
+                    <input class="enter_submit" type="submit" value="Удалить" />
+                </div>
+            </form>
+        </div>
+
+        <div class="rig">
+            @user.Login
+        </div>
+
+    </div>
+
+
+
+
+        }
+    }
+    else
+    {
+        <div>
+            <label> Статей пока нет.</label>
+        </div>
+    }
+
+
+</div>
