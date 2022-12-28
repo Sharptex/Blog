@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class TagController : Controller
     {
         private readonly ITagService tagService;
@@ -24,21 +22,17 @@ namespace Blog.Controllers
             _mapper = mapper;
         }
 
-        [Route("TagAdd")]
+        [Route("TagCreate")]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Create()
         {
             var response = new TagViewModel();
             return View("Index", response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(TagDTO dto)
+        public async Task<IActionResult> Add(TagViewModel dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("DTO object is null");
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid model object");
@@ -46,8 +40,7 @@ namespace Blog.Controllers
 
             Tag tag = _mapper.Map<Tag>(dto);
             var data = await tagService.CreateAsync(tag);
-            //var result = _mapper.Map<TagDTO>(data);
-            //return Ok(result);
+
             return RedirectToAction("Index");
         }
 
@@ -56,7 +49,7 @@ namespace Blog.Controllers
         {
             var data = await tagService.GetAllAsync();
             var result = _mapper.Map<IEnumerable<TagViewModel>>(data);
-            //return Ok(result);
+
             return View("TagList", result);
         }
 
@@ -67,17 +60,29 @@ namespace Blog.Controllers
             if (data == null) return NotFound();
 
             var result = _mapper.Map<TagViewModel>(data);
-            //return Ok(result);
+
             return View("TagEditor", result);
         }
 
+        [Route("Tag/Index")]
+        [HttpGet]
+        public async Task<IActionResult> Index(Guid id)
+        {
+            var data = await tagService.GetAsync(id);
+            if (data == null) return NotFound();
+
+            var result = _mapper.Map<TagViewModel>(data);
+
+            return View("Index", result);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Update(TagDTO dto)
+        public async Task<IActionResult> Update(TagViewModel dto)
         {
             Tag tag = _mapper.Map<Tag>(dto);
-            //tag.Id = id;
+
             var result = await tagService.UpdateAsync(tag);
-            //return Ok(result);
+
             return RedirectToAction("GetAll");
         }
 
@@ -88,7 +93,7 @@ namespace Blog.Controllers
             if (data == null) return NotFound();
 
             var result = await tagService.DeleteAsync(id);
-            //return Ok(result);
+
             return RedirectToAction("GetAll");
         }
     }

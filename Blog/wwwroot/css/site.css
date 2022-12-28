@@ -20,6 +20,10 @@ for details on configuring this project to bundle and minify static web assets. 
     font-size: smaller;
 }
 
+.bd-example {
+    position: relative;
+}
+
 .enter_submit {
     background-color: #5181b8;
     color: white;

@@ -6,7 +6,13 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <form class="nav-link text-dark" method="post" asp-controller="Account" asp-action="Logout">
-        <input class="link_submit" type="submit" value="Exit" />
+        <input class="link_submit" type="submit" value="Выйти" />
+    </form>
+}
+else
+{
+    <form class="nav-link text-dark" method="get" asp-controller="Account" asp-action="LoginGet">
+        <input class="link_submit" type="submit" value="Вход" />
     </form>
 }
 

@@ -6,7 +6,7 @@
 
 <h2>Все теги</h2>
 <div>
-    <a asp-area="" asp-controller="Tag" asp-action="Index">Добавить тэг</a>
+    <a asp-area="" asp-controller="Tag" asp-action="Create">Добавить тэг</a>
 </div>
 
 <div class="block-reg background-white">
@@ -16,28 +16,28 @@
 
         @foreach (var tag in @Model)
         {
-            <div class="list-block">
-                <div class="center-block">
-                    <a asp-area="" asp-controller="Tag" asp-action="Index" asp-route-id="@tag.Id">@tag.Name</a>
-                </div>
+            <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <a asp-area="" asp-controller="Tag" asp-action="Index" asp-route-id="@tag.Id">@tag.Name</a>
                 <div class="rig">Статей по тегу: @tag.Posts.Count() </div>
+            </div>
 
-
-                <div>
+            @if (User.HasClaim("Role", "Admin") || User.HasClaim("Role", "Moderator"))
+            {
+                <div class="form-check form-check-inline">
                     <form method="get" asp-controller="Tag" asp-action="Get" asp-route-id="@tag.Id">
-                        <div>
-                            <input class="enter_submit" type="submit" value="Редактировать" />
-                        </div>
+                        <input class="btn btn-outline-primary btn-sm" type="submit" value="Редактировать" />
                     </form>
 
                     <form method="post" asp-controller="Tag" asp-action="Delete" asp-route-id="@tag.Id">
-                        <div>
-                            <input class="enter_submit" type="submit" value="Удалить" />
-                        </div>
+                        <input class="btn btn-outline-danger btn-sm" type="submit" value="Удалить" />
                     </form>
                 </div>
+            }
 
             </div>
+
+            <br />
         }
     }
     else

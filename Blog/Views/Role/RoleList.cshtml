@@ -6,7 +6,7 @@
 
 <h2>Все теги</h2>
 <div>
-    <a asp-area="" asp-controller="Role" asp-action="Index">Добавить роль</a>
+    <a asp-area="" asp-controller="Role" asp-action="Create">Добавить роль</a>
 </div>
 
 <div class="block-reg background-white">
@@ -16,26 +16,23 @@
 
         @foreach (var role in @Model)
         {
-            <div class="list-block">
-                <div class="center-block">
-                    <a asp-area="" asp-controller="Role" asp-action="Index" asp-route-id="@role.Id">@role.Name</a>
-                </div>
-                <div class="center-block">@role.Description </div>
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <a asp-area="" asp-controller="Role" asp-action="Index" asp-route-id="@role.Id">@role.Name</a>
+            <div class="card-text">@role.Description </div>
+        </div>
 
-                <div>
-                    <form method="get" asp-controller="Role" asp-action="Get" asp-route-id="@role.Id">
-                        <div>
-                            <input class="enter_submit" type="submit" value="Редактировать" />
-                        </div>
-                    </form>
+            <div class="form-check form-check-inline">
+                <form method="get" asp-controller="Role" asp-action="Get" asp-route-id="@role.Id">
+                    <input class="btn btn-outline-primary btn-sm" type="submit" value="Редактировать" />
+                </form>
 
-                    <form method="post" asp-controller="Role" asp-action="Delete" asp-route-id="@role.Id">
-                        <div>
-                            <input class="enter_submit" type="submit" value="Удалить" />
-                        </div>
-                    </form>
-                </div>
+                <form method="post" asp-controller="Role" asp-action="Delete" asp-route-id="@role.Id">
+                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Удалить" />
+                </form>
             </div>
+
+        </div>
         }
     }
     else

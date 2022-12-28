@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class CommentController : Controller
     {
         private readonly ICommentService _commentService;
@@ -41,10 +39,6 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(PostAndCommentsViewModel dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("DTO object is null");
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid model object");
@@ -65,7 +59,7 @@ namespace Blog.Controllers
         {
             var data = await _commentService.GetAllAsync();
             var result = _mapper.Map<IEnumerable<CommentViewModel>>(data);
-            //return Ok(result);
+
             return View("CommentList", result);
         }
 
@@ -76,7 +70,7 @@ namespace Blog.Controllers
             if (data == null) return NotFound();
 
             var result = _mapper.Map<CommentViewModel>(data);
-            //return Ok(result);
+
             return View("CommentEditor", result);
         }
 
@@ -88,7 +82,7 @@ namespace Blog.Controllers
             if (data == null) return NotFound();
 
             var result = _mapper.Map<CommentViewModel>(data);
-            //return Ok(result);
+
             return View("Index", result);
         }
 
@@ -97,13 +91,11 @@ namespace Blog.Controllers
         {
             Comment comment = _mapper.Map<Comment>(dto);
             comment.Updated_at = DateTimeOffset.Now;
-            //var user = await _accountService.GetAsync(authorId);
-            //var post = await _postService.GetAsync(postId);
             comment.Author_id = authorId;
             comment.Post_id = postId;
 
             var result = await _commentService.UpdateAsync(comment);
-            //return Ok(data);
+
             return RedirectToAction("GetAll");
         }
 
@@ -114,7 +106,7 @@ namespace Blog.Controllers
             if (data == null) return NotFound();
 
             var result = await _commentService.DeleteAsync(id);
-            //return Ok(data);
+
             return RedirectToAction("GetAll");
         }
     }

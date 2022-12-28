@@ -52,13 +52,13 @@ namespace Blog_BLL.Services
             foreach (var id in newRoles)
             {
                 var role = await _roles.GetAsync(id);
-                if (role != null && id != defaultUserRole.Id)
-                {
-                    if (await AddRoleAndClaimAsync(user, role)) { return false; }
-                }
-                else
+                if (role == null)
                 {
                     return false;
+                }
+                if (id != defaultUserRole.Id)
+                {
+                    if (!await AddRoleAndClaimAsync(user, role)) { return false; }
                 }
             }
 
@@ -109,9 +109,8 @@ namespace Blog_BLL.Services
 
         public async Task<User> GetAsync(string id)
         {
-            var data = await _userManager.Users.Include(p => p.Roles).Include(n=>n.Posts).FirstOrDefaultAsync(x=>x.Id==id);
+            var data = await _userManager.Users.Include(p => p.Roles).Include(n=>n.Posts).Include(n => n.Comments).FirstOrDefaultAsync(x=>x.Id==id);
 
-            var claims = await _userManager.GetClaimsAsync(data);
             return data;
         }
 

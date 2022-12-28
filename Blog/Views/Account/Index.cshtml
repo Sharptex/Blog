@@ -1,3 +1,94 @@
-﻿
+﻿@model Blog.ViewModels.UserViewModel
 
-<h2>Вход в приложение</h2>
+@{
+    ViewData["Title"] = "User View";
+}
+
+<h2>Информация о пользователе</h2>
+
+<label asp-for="FirstName"></label>: @Model.FirstName
+<br />
+<label asp-for="LastName"></label>: @Model.LastName
+<br />
+<label asp-for="Login"></label>: @Model.Login
+<br />
+
+<h4>Доступные роли</h4>
+
+<div>
+    @if (@Model.Roles.Count() != 0)
+    {
+        @for (var i = 0; i < Model.Roles.Count(); i++)
+        {
+            <span class="badge badge-success">@Model.Roles[i].Name</span>
+        }
+    }
+    else
+    {
+        <div>
+            <label> Ролей пока нет.</label>
+        </div>
+    }
+</div>
+
+<br />
+<h4>Статьи пользователя</h4>
+
+<div class="block-reg background-white">
+
+    @if (@Model.Posts.Count() != 0)
+    {
+
+        @foreach (var post in @Model.Posts)
+        {
+            <div class="list-block">
+                <div class="center-block">
+                    <a asp-area="" asp-controller="Post" asp-action="Index" asp-route-id="@post.Id">@post.Title</a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div>
+            <label> Статей пока нет.</label>
+        </div>
+    }
+</div>
+
+<br />
+<h4>Комментарии пользователя</h4>
+
+<div class="block-reg background-white">
+
+    @if (@Model.Comments.Count() != 0)
+    {
+
+        @foreach (var comm in @Model.Comments)
+        {
+            <div class="list-block">
+                <div class="center-block">
+                    @comm.Content
+                </div>
+                <div class="rig">@comm.Author.Login </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div>
+            <label> Комментариев пока нет.</label>
+        </div>
+    }
+
+</div>
+
+
+<div>
+    <a asp-area="" asp-controller="Account" asp-action="GetAll">Вернуться к списку пользователей</a>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -16,48 +16,40 @@
 
         @foreach (var user in @Model)
         {
-    <div class="list-block">
-        <div class="center-block">
-            <a asp-area="" asp-controller="Account" asp-action="Get" asp-route-id="@user.Id">@user.FirstName @user.LastName</a>
-        </div>
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title"><a asp-area="" asp-controller="Account" asp-action="Index" asp-route-id="@user.Id">@user.FirstName @user.LastName</a></h5>
 
-        <div>
-            @if (user.Roles.Count() != 0)
-            {
-                @for (var i = 0; i < user.Roles.Count(); i++)
+            <div>
+                @if (user.Roles.Count() != 0)
                 {
-                    <label>@user.Roles[i].Name</label>
+                    @for (var i = 0; i < user.Roles.Count(); i++)
+                    {
+                        <span class="badge badge-success">@user.Roles[i].Name</span>
+                    }
                 }
-            }
-            else
-            {
+                else
+                {
                     <label> Ролей пока нет.</label>
-            }
+                }
+            </div>
+
+            <div class="form-check form-check-inline">
+                <form method="get" asp-controller="Account" asp-action="Get" asp-route-id="@user.Id">
+                        <input class="btn btn-outline-primary btn-sm" type="submit" value="Редактировать" />
+                </form>
+
+                <form method="post" asp-controller="Account" asp-action="Delete" asp-route-id="@user.Id">
+                        <input class="btn btn-outline-danger btn-sm" type="submit" value="Удалить" />
+                </form>
+            </div>
+
         </div>
 
-
-        <div>
-            <form method="get" asp-controller="Account" asp-action="Get" asp-route-id="@user.Id">
-                <div>
-                    <input class="enter_submit" type="submit" value="Редактировать" />
-                </div>
-            </form>
-
-            <form method="post" asp-controller="Account" asp-action="Delete" asp-route-id="@user.Id">
-                <div>
-                    <input class="enter_submit" type="submit" value="Удалить" />
-                </div>
-            </form>
-        </div>
-
-        <div class="rig">
-            @user.Login
-        </div>
-
+        <footer class="blockquote-footer">@user.Login</footer>
     </div>
 
-
-
+    <br/>
 
         }
     }

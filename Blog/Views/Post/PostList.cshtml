@@ -16,49 +16,39 @@
 
         @foreach (var post in @Model)
         {
-    <div class="list-block">
-        <div class="center-block">
+    <div class="card" style="width: 30rem;">
+        <div class="card-body">
             <a asp-area="" asp-controller="Post" asp-action="Index" asp-route-id="@post.Id">@post.Title</a>
-        </div>
-
-        <div>
+            <br />
             @if (@post.Tags.Count() != 0)
             {
                 @for (var i = 0; i < post.Tags.Count(); i++)
                 {
-                    <label>@post.Tags[i].Name</label>
+                    <span class="badge badge-success">@post.Tags[i].Name</span>
                 }
             }
             else
             {
-                    <label> Тэгов пока нет.</label>
+                <label> Тэгов пока нет.</label>
             }
         </div>
 
+        @if (User.HasClaim("Role", "Admin") || User.HasClaim("Role", "Moderator"))
+        {
+            <div class="form-check form-check-inline">
+                <form method="get" asp-controller="Post" asp-action="Get" asp-route-id="@post.Id">
+                    <input class="btn btn-outline-primary btn-sm" type="submit" value="Редактировать" />
+                </form>
 
-        <div>
-            <form method="get" asp-controller="Post" asp-action="Get" asp-route-id="@post.Id">
-                <div>
-                    <input class="enter_submit" type="submit" value="Редактировать" />
-                </div>
-            </form>
+                <form method="post" asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id">
+                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Удалить" />
+                </form>
+            </div>
+        }
 
-            <form method="post" asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id">
-                <div>
-                    <input class="enter_submit" type="submit" value="Удалить" />
-                </div>
-            </form>
         </div>
 
-        <div class="rig">
-            Просмотров:
-        </div>
-
-    </div>
-
-
-
-
+            <br />
         }
     }
     else

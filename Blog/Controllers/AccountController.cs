@@ -29,9 +29,9 @@ namespace Blog.Controllers
         }
 
 
-        [Route("UserGet")]
+        [Route("UserCreate")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Create()
         {
             var response = new UserViewModel();
             var allRoles = await _roleService.GetAllAsync();
@@ -52,10 +52,6 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("DTO object is null");
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid model object");
@@ -64,23 +60,17 @@ namespace Blog.Controllers
             User user = _mapper.Map<User>(dto);
 
             var data = await _accountService.Create(user, dto.PasswordReg, dto.Roles);
-            //await _accountService.SignInAsync(user, true);
 
             if (!data)
             {
                 ModelState.AddModelError(string.Empty, "Bad registration");
             }
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            //return Ok();
             return RedirectToAction("LoginGet");
         }
 
         [Route("")]
         [Route("LoginGet")]
-        //[Route("[controller]/[action]")]
         [HttpGet]
         public IActionResult LoginGet()
         {
@@ -92,10 +82,6 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("DTO object is null");
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid model object");
@@ -109,7 +95,6 @@ namespace Blog.Controllers
                 return BadRequest(ModelState);
             }
 
-            //return Ok();
             return RedirectToAction("LoginGet");
         }
 
@@ -119,17 +104,16 @@ namespace Blog.Controllers
         {
             await _accountService.SignOutAsync();
 
-            //return Ok();
             return RedirectToAction("LoginGet");
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "AdminPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var data = await _accountService.GetAllAsync();
             var result = _mapper.Map<IEnumerable<UserViewModel>>(data);
-            //return Ok(result);
+
             return View("UserList", result);
         }
 
@@ -145,8 +129,18 @@ namespace Blog.Controllers
             var vm = allRolesVM.Select(x => { if (result.Roles.Any(y => y.Id == x.Id)) { x.Selected = true; return x; } else { return x; } }).ToList();
             result.Roles = vm;
 
-            //return Ok(result);
             return View("UserEditor", result);
+        }
+
+        [Route("Account/Index")]
+        [HttpGet]
+        public async Task<IActionResult> Index(string id)
+        {
+            var data = await _accountService.GetAsync(id);
+            if (data == null) return NotFound();
+            var result = _mapper.Map<UserViewModel>(data);
+            result.Comments = result.Comments.OrderBy(x => x.Created_at).ToList();
+            return View("Index", result);
         }
 
         [HttpPost]
@@ -156,14 +150,14 @@ namespace Blog.Controllers
             if (user == null) return NotFound();
 
             await _accountService.UpdatePasswordAsync(user, dto.CurrentPassword, dto.Password);
-            await _accountService.AddRolesAndClaimsAsync(user, dto.Roles.Select(v => v.Id).ToList());
+            await _accountService.AddRolesAndClaimsAsync(user, dto.Roles.Where(v => v.Selected).Select(v => v.Id).ToList());
 
             user.FirstName = dto.FirstName;
             user.LastName = dto.LastName;
             user.UserName = dto.Login;
 
             var data = await _accountService.UpdateAsync(user);
-            //return Ok(data);
+
             return RedirectToAction("GetAll");
         }
 
@@ -173,7 +167,7 @@ namespace Blog.Controllers
             var user = await _accountService.GetAsync(id);
             if (user == null) return NotFound();
             var result = await _accountService.DeleteAsync(user);
-            //return Ok(result);
+
             return RedirectToAction("GetAll");
         }
     }

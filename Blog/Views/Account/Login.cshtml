@@ -5,20 +5,12 @@
 
     @model Blog.ViewModels.LoginViewModel
     @{
-        ViewData["Title"] = "Home Page";
+        ViewData["Title"] = "Login Page";
     }
 
-    @if (SignInManager.IsSignedIn(User) && User.HasClaim("Role", "Admin"))
+    @if (SignInManager.IsSignedIn(User))
     {
-        <div>Hello @User.Identity.Name!</div>
-
-        @foreach (var cl in User.Claims)
-        {
-            @if (cl.Type == "Role")
-            {
-                <div> @cl.Value </div>
-            }
-        }
+        <div>Привет, @User.Identity.Name!</div>
     }
     else
     {
@@ -51,8 +43,9 @@
         </div>
     }
 
-    @section Scripts
+
+@section Scripts
 {
         <partial name="_ValidationScriptsPartial" />
-    }
+}
 

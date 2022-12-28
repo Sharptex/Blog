@@ -87,19 +87,7 @@ namespace Blog_DAL.Repositories
 
         public async Task<int> UpdateAsync(T item)
         {
-            Console.WriteLine("___________________________________");
-            Console.WriteLine(_db.ChangeTracker.DebugView.LongView);
-
-            //var xxx = _db.Set<T>().Local.Contains(item);
-
             _db.Update(item);
-            Console.WriteLine("___________________________________");
-            Console.WriteLine(_db.ChangeTracker.DebugView.LongView);
-
-            //foreach (var tag in (item as Post).Tags)
-            //{
-            //    var xxx2 = _db.Set<Tag>().Local.Contains(tag);
-            //}
 
             return await _db.SaveChangesAsync();
         }

@@ -15,8 +15,6 @@ using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class PostController : Controller
     {
         private IMapper _mapper;
@@ -43,14 +41,9 @@ namespace Blog.Controllers
             return View("PostCreate", response);
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
         [HttpPost]
         public async Task<IActionResult> Add(PostViewModel dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("DTO object is null");
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid model object");
@@ -62,18 +55,15 @@ namespace Blog.Controllers
 
             var result = await _postService.CreatePostWithTags(User, post);
 
-            //var data = _mapper.Map<PostDTO>(result);
-            //return Ok(data);
             return RedirectToAction("GetAll");
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var data = await _postService.GetAllAsync();
             var result = _mapper.Map<IEnumerable<PostViewModel>>(data);
-            //return Ok(result);
+
             return View("PostList", result);
         }
 
@@ -89,7 +79,6 @@ namespace Blog.Controllers
             var vm = allTagsVM.Select(x => { if (result.Tags.Any(y => y.Id == x.Id)) { x.Selected = true; return x; } else { return x; } }).ToList();
             result.Tags = vm;
 
-            //return Ok(result);
             return View("PostEditor", result);
         }
 
@@ -102,9 +91,8 @@ namespace Blog.Controllers
             var result = _mapper.Map<PostAndCommentsViewModel>(data);
 
             result.Comments = result.Comments.OrderBy(x => x.Created_at).ToList();
-
             result.Comment = new CommentViewModel();
-            //return Ok(result);
+
             return View("Index", result);
         }
 
@@ -114,10 +102,9 @@ namespace Blog.Controllers
         {
             var data = await _accountService.GetAsync(id);
             if (data == null) return NotFound();
-            var result = _mapper.Map<IEnumerable<PostDTO>>(data.Posts);
+            var result = _mapper.Map<IEnumerable<PostViewModel>>(data.Posts);
             return Ok(result);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Update(PostViewModel dto)
@@ -125,7 +112,7 @@ namespace Blog.Controllers
             Post post = _mapper.Map<Post>(dto);
             post.Updated_at = DateTimeOffset.Now;
             post.Tags.Clear();
-            var updateCounter2 = await _postService.UpdateAsync(User, post);
+            await _postService.UpdateAsync(User, post);
 
             var oldPost = await _postService.GetAsync(dto.Id);
             
@@ -144,8 +131,8 @@ namespace Blog.Controllers
                 }
             }
 
-            var updateCounter1 = await _postService.UpdateAsync(User, oldPost);
-            //return Ok(data);
+            await _postService.UpdateAsync(User, oldPost);
+
             return RedirectToAction("GetAll");
         }
 
@@ -155,7 +142,7 @@ namespace Blog.Controllers
             var data = await _postService.GetAsync(id);
             if (data == null) return NotFound();
             var result = await _postService.DeleteAsync(id);
-            //return Ok(data);
+
             return RedirectToAction("GetAll");
         }
     }

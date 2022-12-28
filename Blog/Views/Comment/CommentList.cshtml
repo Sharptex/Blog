@@ -16,31 +16,31 @@
 
         @foreach (var comm in @Model)
         {
-            <div class="list-block">
-
-                <div class="block-reg background-white">
-                    <div class="center-block">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <div class="card-text">
                         @comm.Content
                     </div>
-                    <a asp-area="" asp-controller="Comment" asp-action="Index" asp-route-id="@comm.Id">@comm.Post.Title</a>
-                    <div class="rig">@comm.Author.Login </div>
+                    <div class="card-title">
+                        <a asp-area="" asp-controller="Comment" asp-action="Index" asp-route-id="@comm.Id">@comm.Post.Title</a> 
+                        <footer class="blockquote-footer">@comm.Author.Login</footer>
+                    </div>
+                    
                 </div>
 
-                <div>
+                <div class="form-check form-check-inline">
                     <form method="get" asp-controller="Comment" asp-action="Get" asp-route-id="@comm.Id">
-                        <div>
-                            <input class="enter_submit" type="submit" value="Редактировать" />
-                        </div>
+                        <input class="btn btn-outline-primary btn-sm" type="submit" value="Редактировать" />
                     </form>
 
                     <form method="post" asp-controller="Comment" asp-action="Delete" asp-route-id="@comm.Id">
-                        <div>
-                            <input class="enter_submit" type="submit" value="Удалить" />
-                        </div>
+                        <input class="btn btn-outline-danger btn-sm" type="submit" value="Удалить" />
                     </form>
                 </div>
 
             </div>
+
+            <br/>
         }
     }
     else

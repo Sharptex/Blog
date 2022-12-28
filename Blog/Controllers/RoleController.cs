@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class RoleController : Controller
     {
         private readonly IRoleService _roleService;
@@ -24,21 +22,17 @@ namespace Blog.Controllers
             _mapper = mapper;
         }
 
-        [Route("RoleAdd")]
+        [Route("RoleCreate")]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Create()
         {
             var response = new RoleViewModel();
-            return View("Index", response);
+            return View("RoleCreate", response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(RoleDTO dto)
+        public async Task<IActionResult> Add(RoleViewModel dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("DTO object is null");
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid model object");
@@ -47,8 +41,7 @@ namespace Blog.Controllers
             Role role = _mapper.Map<Role>(dto);
             
             var data = await _roleService.CreateAsync(role);
-            //var result = _mapper.Map<RoleDTO>(data);
-            //return Ok(result);
+
             return RedirectToAction("Index");
         }
 
@@ -57,7 +50,7 @@ namespace Blog.Controllers
         {
             var data = await _roleService.GetAllAsync();
             var result = _mapper.Map<IEnumerable<RoleViewModel>>(data);
-            //return Ok(result);
+
             return View("RoleList", result);
         }
 
@@ -68,17 +61,28 @@ namespace Blog.Controllers
             if (data == null) return NotFound();
 
             var result = _mapper.Map<RoleViewModel>(data);
-            //return Ok(result);
+
             return View("RoleEditor", result);
         }
 
+        [Route("Role/Index")]
+        [HttpGet]
+        public async Task<IActionResult> Index(Guid id)
+        {
+            var data = await _roleService.GetAsync(id);
+            if (data == null) return NotFound();
+
+            var result = _mapper.Map<RoleViewModel>(data);
+
+            return View("Index", result);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Update(RoleDTO dto)
+        public async Task<IActionResult> Update(RoleViewModel dto)
         {
             Role role = _mapper.Map<Role>(dto);
-            //role.Id = id;
             var result = await _roleService.UpdateAsync(role);
-            //return Ok(result);
+
             return RedirectToAction("GetAll");
         }
 
@@ -89,7 +93,7 @@ namespace Blog.Controllers
             if (data == null) return NotFound();
 
             var result = await _roleService.DeleteAsync(id);
-            //return Ok(result);
+
             return RedirectToAction("GetAll");
         }
     }

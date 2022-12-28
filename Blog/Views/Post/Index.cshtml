@@ -11,7 +11,7 @@
     {
         @for (var i = 0; i < Model.Tags.Count(); i++)
         {
-            <label asp-for="@Model.Tags[i].Name">@Model.Tags[i].Name</label>
+            <span class="badge badge-info">@Model.Tags[i].Name</span>
         }
     }
     else
@@ -26,11 +26,11 @@
 <p>@Model.Content</p>
 <hr />
 
-<p class="rig">@Model.Author.Login</p>
+<p class="blockquote-footer">@Model.Author.Login</p>
 
 
 <div>
-    <label> Комментарии к статье</label>
+    <h4> Комментарии к статье</h4>
 </div>
 
 
@@ -45,7 +45,8 @@
                 <div class="center-block">
                     @comm.Content
                 </div>
-                <div class="rig">@comm.Author.Login </div>
+
+                <span class="badge badge-success">@comm.Author.Login</span>
             </div>
         }
     }
@@ -62,7 +63,7 @@
     <input type="hidden" asp-for="@Model.Id" />
     <div>
         <label asp-for="Comment"></label><br />
-        <textarea asp-for="Comment.Content"></textarea>
+        <textarea class="form-control" asp-for="Comment.Content"></textarea>
         <span asp-validation-for="Comment"></span>
     </div>
     <div>

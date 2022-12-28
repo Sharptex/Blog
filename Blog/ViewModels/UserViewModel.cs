@@ -21,6 +21,9 @@ namespace Blog.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Пароль", Prompt = "Введите пароль")]
         public string Password { get; set; }
+        public List<PostViewModel> Posts { get; set; }
         public List<RoleViewModel> Roles { get; set; }
+        public List<CommentViewModel> Comments { get; set; }
+
     }
 }
