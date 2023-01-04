@@ -62,9 +62,9 @@
 <form method="post" asp-controller="Comment" asp-action="Add">
     <input type="hidden" asp-for="@Model.Id" />
     <div>
-        <label asp-for="Comment"></label><br />
+        @*<label asp-for="Comment.Content"></label><br />*@
         <textarea class="form-control" asp-for="Comment.Content"></textarea>
-        <span asp-validation-for="Comment"></span>
+        <span asp-validation-for="Comment.Content"></span>
     </div>
     <div>
         <input class="enter_submit" type="submit" value="Оставить комментарий" />

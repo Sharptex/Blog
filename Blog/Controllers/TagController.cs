@@ -27,7 +27,7 @@ namespace Blog.Controllers
         public IActionResult Create()
         {
             var response = new TagViewModel();
-            return View("Index", response);
+            return View("TagCreate", response);
         }
 
         [HttpPost]
@@ -41,7 +41,7 @@ namespace Blog.Controllers
             Tag tag = _mapper.Map<Tag>(dto);
             var data = await tagService.CreateAsync(tag);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("GetAll");
         }
 
         [HttpGet]

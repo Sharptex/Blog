@@ -10,22 +10,24 @@ using Blog.DTO;
 using Blog_BLL.Contracts;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace Blog.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class AccountController : Controller
     {
         private IMapper _mapper;
         private readonly IAccountService _accountService;
         private readonly IRoleService _roleService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IAccountService accountService, IRoleService roleService, IMapper mapper)
+        public AccountController(IAccountService accountService, IRoleService roleService, IMapper mapper, ILogger<AccountController> logger)
         {
             _accountService = accountService;
             _roleService = roleService;
             _mapper = mapper;
+            _logger = logger;
+            //_logger.LogDebug(1, "NLog injected into AccountController");
         }
 
 
@@ -78,10 +80,12 @@ namespace Blog.Controllers
             return View("Login", response);
         }
 
-        [Route("Login")]
+        [Route("Account/Login")]
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel dto)
         {
+            //throw new Exception();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid model object");
@@ -91,9 +95,16 @@ namespace Blog.Controllers
 
             if (!result.Succeeded)
             {
+                _logger.LogTrace("Entered. Data is {User}", dto);
+
                 ModelState.AddModelError("Login", "Неправильный логин и (или) пароль");
+
                 return BadRequest(ModelState);
+                //return NotFound();
+                //return RedirectToAction("LoginGet");
             }
+
+            _logger.LogInformation("Hello, this is the Login!");
 
             return RedirectToAction("LoginGet");
         }

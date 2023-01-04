@@ -109,6 +109,11 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(PostViewModel dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             Post post = _mapper.Map<Post>(dto);
             post.Updated_at = DateTimeOffset.Now;
             post.Tags.Clear();

@@ -21,6 +21,7 @@ namespace Blog.Views
         public ErrorModel(ILogger<ErrorModel> logger)
         {
             _logger = logger;
+            _logger.LogDebug(1, "NLog injected into HomeController");
         }
 
         public void OnGet()

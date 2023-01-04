@@ -42,7 +42,7 @@ namespace Blog.Controllers
             
             var data = await _roleService.CreateAsync(role);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("GetAll");
         }
 
         [HttpGet]

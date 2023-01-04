@@ -89,7 +89,7 @@ namespace Blog
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -98,6 +98,10 @@ namespace Blog
                 app.UseHsts();
             }
 
+            app.UseMiddleware<UnhandledExceptionMiddleware>();
+            app.UseExceptionHandler("/Home/Error");
+
+            app.UseMiddleware<HttpRequestBodyMiddleware>();
             app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 
             app.UseStaticFiles();

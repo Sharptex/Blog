@@ -15,10 +15,10 @@ namespace Blog.Controllers
             return View();
         }
 
-        [HttpGet]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(int? statusCode = null)
         {
-            if (statusCode.HasValue)
+             if (statusCode.HasValue)
             {
                 if (statusCode == 404 || statusCode == 500)
                 {
@@ -37,7 +37,7 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
-        public ActionResult Unauthorized()
+        new public  ActionResult Unauthorized()
         {
             return View();
         }
