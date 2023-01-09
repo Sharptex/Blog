@@ -18,7 +18,7 @@ namespace Blog.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(int? statusCode = null)
         {
-             if (statusCode.HasValue)
+            if (statusCode.HasValue)
             {
                 if (statusCode == 404 || statusCode == 500)
                 {
@@ -27,7 +27,7 @@ namespace Blog.Controllers
                 }
             }
 
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("500");
         }
 
         [HttpGet]

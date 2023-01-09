@@ -25,6 +25,7 @@ namespace Blog
             {
                 logger.LogError(exception,
                     $"Request {context.Request?.Method}: {context.Request?.Path.Value} failed");
+                throw;
             }
         }
     }

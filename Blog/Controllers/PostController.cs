@@ -46,7 +46,7 @@ namespace Blog.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid model object");
+                return BadRequest(ModelState);
             }
 
             Post post = _mapper.Map<Post>(dto);
@@ -111,7 +111,7 @@ namespace Blog.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             Post post = _mapper.Map<Post>(dto);

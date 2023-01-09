@@ -19,15 +19,12 @@ namespace Blog.Controllers
         private IMapper _mapper;
         private readonly IAccountService _accountService;
         private readonly IRoleService _roleService;
-        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IAccountService accountService, IRoleService roleService, IMapper mapper, ILogger<AccountController> logger)
+        public AccountController(IAccountService accountService, IRoleService roleService, IMapper mapper)
         {
             _accountService = accountService;
             _roleService = roleService;
             _mapper = mapper;
-            _logger = logger;
-            //_logger.LogDebug(1, "NLog injected into AccountController");
         }
 
 
@@ -84,27 +81,18 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel dto)
         {
-            //throw new Exception();
-
             if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid model object");
+                return BadRequest();
             }
 
             var result = await _accountService.Login(dto.Login, dto.Password, dto.RememberMe);
 
             if (!result.Succeeded)
             {
-                _logger.LogTrace("Entered. Data is {User}", dto);
-
                 ModelState.AddModelError("Login", "Неправильный логин и (или) пароль");
-
-                return BadRequest(ModelState);
-                //return NotFound();
-                //return RedirectToAction("LoginGet");
+                return BadRequest();
             }
-
-            _logger.LogInformation("Hello, this is the Login!");
 
             return RedirectToAction("LoginGet");
         }
